@@ -9,95 +9,117 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .bg-landscape { background: linear-gradient(to bottom, #f0fdf4, #eff6ff); }
-        .card-fauna { transition: transform 0.2s; border: 2px solid #fbbf24; }
-        .card-fauna:focus-within { transform: scale(1.05); border-color: #d97706; }
+        .card-fauna { border: 2px solid #fbbf24; transition: transform 0.2s; }
+        .hidden { display: none; }
     </style>
 </head>
 <body class="bg-landscape p-4 text-slate-900">
-    <div class="max-w-md mx-auto bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-6 border border-white">
-        <!-- Encabezado con Identidad Visual -->
-        <header class="text-center mb-8">
-            <img src="assets/logo.png" alt="Fauna balance Logo" class="w-24 mx-auto mb-3 drop-shadow-lg">
-            <h1 class="text-4xl font-black text-slate-800 tracking-tighter uppercase italic">Fauna balance</h1>
-            <p class="text-slate-500 font-medium text-xs tracking-widest uppercase">"Equilibra tu Ecosistema"</p>
+
+    <!-- PANTALLA DE PORTADA -->
+    <div id="welcome-screen" class="fixed inset-0 z-50 bg-landscape flex flex-col items-center justify-center p-6 text-center">
+        <img src="assets/portada.png" alt="Fauna balance Portada" class="w-64 mb-8 drop-shadow-2xl rounded-3xl">
+        <h1 class="text-4xl font-black text-slate-800 tracking-tighter uppercase italic mb-2">Fauna balance</h1>
+        <p class="text-slate-600 mb-8 font-medium italic">Selecciona el número de jugadores [1]</p>
+        <div class="grid grid-cols-2 gap-4 w-full max-w-xs">
+            <button onclick="startGame(1)" class="bg-white py-4 rounded-2xl shadow-md font-bold text-slate-700 border-2 border-transparent hover:border-amber-400">1 Jugador</button>
+            <button onclick="startGame(2)" class="bg-white py-4 rounded-2xl shadow-md font-bold text-slate-700 border-2 border-transparent hover:border-amber-400">2 Jugadores</button>
+            <button onclick="startGame(3)" class="bg-white py-4 rounded-2xl shadow-md font-bold text-slate-700 border-2 border-transparent hover:border-amber-400">3 Jugadores</button>
+            <button onclick="startGame(4)" class="bg-white py-4 rounded-2xl shadow-md font-bold text-slate-700 border-2 border-transparent hover:border-amber-400">4 Jugadores</button>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div id="main-app" class="hidden max-w-md mx-auto bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-6 border border-white">
+        <header class="text-center mb-6">
+            <div id="display-players" class="text-[10px] font-bold text-amber-600 uppercase tracking-widest bg-amber-50 inline-block px-3 py-1 rounded-full mb-2"></div>
+            <h1 class="text-3xl font-black text-slate-800 tracking-tighter uppercase italic">Fauna balance</h1>
+            <button id="btn-soles" onclick="toggleSolesTable()" class="hidden mt-2 text-[10px] bg-amber-400 text-white px-2 py-1 rounded-lg font-bold uppercase tracking-tighter shadow-sm">☀️ Ver Tabla de Soles [2]</button>
         </header>
 
-        <!-- 1. BLOQUE DE PAISAJES -->
-        <div class="space-y-4 mb-8">
-            <h2 class="text-sm font-black text-slate-400 uppercase tracking-widest border-b pb-1">1. Paisajes Naturales</h2>
-            
+        <!-- 1. PAISAJES (Criterios oficiales [3-8]) -->
+        <div class="space-y-4 mb-8 text-center">
+            <h2 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b pb-1">1. Paisajes Naturales</h2>
             <section class="grid grid-cols-2 gap-4">
-                <div class="p-4 bg-green-100 rounded-2xl border border-green-200">
-                    <label class="block text-xs font-bold text-green-700 uppercase mb-2">🌲 Árboles</label>
-                    <input id="trees1" type="number" placeholder="Cant. T1" class="w-full p-2 rounded-xl border-none text-sm mb-1 shadow-sm">
-                    <input id="trees2" type="number" placeholder="Cant. T2" class="w-full p-2 rounded-xl border-none text-sm mb-1 shadow-sm">
-                    <input id="trees3" type="number" placeholder="Cant. T3" class="w-full p-2 rounded-xl border-none text-sm shadow-sm">
+                <div class="p-3 bg-green-100 rounded-2xl border border-green-200">
+                    <label class="block text-[10px] font-bold text-green-700 uppercase mb-1">🌲 Árboles (1, 3, 7 pts)</label>
+                    <input id="trees1" type="number" placeholder="T1" class="w-full p-2 rounded-lg text-sm mb-1">
+                    <input id="trees2" type="number" placeholder="T2" class="w-full p-2 rounded-lg text-sm mb-1">
+                    <input id="trees3" type="number" placeholder="T3" class="w-full p-2 rounded-lg text-sm">
                 </div>
-                <div class="p-4 bg-slate-100 rounded-2xl border border-slate-200">
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-2">⛰️ Montañas</label>
-                    <input id="mnt2" type="number" placeholder="Cant. H2" class="w-full p-2 rounded-xl border-none text-sm mb-1 shadow-sm">
-                    <input id="mnt3" type="number" placeholder="Cant. H3" class="w-full p-2 rounded-xl border-none text-sm shadow-sm">
+                <div class="p-3 bg-slate-100 rounded-2xl border border-slate-200">
+                    <label class="block text-[10px] font-bold text-slate-700 uppercase mb-1">⛰️ Montañas Adyacentes</label>
+                    <input id="mnt2" type="number" placeholder="H2 (3pts)" class="w-full p-2 rounded-lg text-sm mb-1">
+                    <input id="mnt3" type="number" placeholder="H3 (7pts)" class="w-full p-2 rounded-lg text-sm">
                 </div>
             </section>
-
             <section class="grid grid-cols-2 gap-4">
-                <div class="p-4 bg-yellow-100 rounded-2xl border border-yellow-200">
-                    <label class="block text-xs font-bold text-yellow-700 uppercase mb-2">🌾 Prados</label>
-                    <input id="fields" type="number" placeholder="Grupos 2+" class="w-full p-2 rounded-xl border-none text-sm shadow-sm">
+                <div class="p-3 bg-yellow-100 rounded-2xl border border-yellow-200">
+                    <label class="block text-[10px] font-bold text-yellow-700 uppercase mb-1">🌾 Prados (5 pts/grupo)</label>
+                    <input id="fields" type="number" placeholder="Grupos 2+" class="w-full p-2 rounded-lg text-sm">
                 </div>
-                <div class="p-4 bg-red-100 rounded-2xl border border-red-200">
-                    <label class="block text-xs font-bold text-red-700 uppercase mb-2">🏠 Ciudades</label>
-                    <input id="buildings" type="number" placeholder="Edif. Válidos" class="w-full p-2 rounded-xl border-none text-sm shadow-sm">
+                <div class="p-3 bg-red-100 rounded-2xl border border-red-200">
+                    <label class="block text-[10px] font-bold text-red-700 uppercase mb-1">🏠 Ciudades (5 pts)</label>
+                    <input id="buildings" type="number" placeholder="Válidos" class="w-full p-2 rounded-lg text-sm">
                 </div>
             </section>
-
-            <section class="p-4 bg-blue-100 rounded-2xl border border-blue-200">
-                <label class="block text-xs font-bold text-blue-700 uppercase mb-2">💧 Ríos y Agua</label>
+            <section class="p-3 bg-blue-100 rounded-2xl border border-blue-200">
+                <label class="block text-[10px] font-bold text-blue-700 uppercase mb-2">💧 Agua y Ríos (Lado A/B)</label>
                 <div class="flex gap-2">
-                    <select id="water-mode" class="w-1/2 p-2 rounded-xl border-none text-sm shadow-sm">
+                    <select id="water-mode" class="w-1/2 p-2 rounded-lg text-sm">
                         <option value="A">Lado A: Río</option>
                         <option value="B">Lado B: Islas</option>
                     </select>
-                    <input id="water-val" type="number" placeholder="Fichas" class="w-1/2 p-2 rounded-xl border-none text-sm shadow-sm">
+                    <input id="water-val" type="number" placeholder="Valor" class="w-1/2 p-2 rounded-lg text-sm">
                 </div>
             </section>
         </div>
 
-        <!-- 2. RECUENTO DE FAUNA (9 CARTAS) -->
+        <!-- 2. FAUNA (9 cartas [9, 10]) -->
         <div class="mb-8">
-            <h2 class="text-sm font-black text-slate-400 uppercase tracking-widest border-b pb-1 mb-4">2. Especies de Fauna</h2>
-            <div class="grid grid-cols-3 gap-3" id="fauna-container">
-                <!-- Generado por JS: FAUNA1.png a FAUNA9.png -->
-            </div>
+            <h2 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b pb-1 mb-4">2. Especies de Fauna (9 cartas)</h2>
+            <div class="grid grid-cols-3 gap-3" id="fauna-container"></div>
         </div>
 
-        <!-- 3. VARIANT ESPÍRITUS (MEJORADO) -->
-        <div class="mb-8 p-4 bg-purple-100 rounded-2xl border border-purple-200">
-            <h2 class="text-xs font-black text-purple-700 uppercase tracking-widest mb-3 flex items-center">
-                <span class="mr-2">✨</span> Espíritus de la Naturaleza
-            </h2>
-            <div class="flex items-center justify-between bg-white/50 p-3 rounded-xl shadow-inner">
-                <span class="text-xs font-semibold text-purple-800">¿Cubo colocado?</span>
+        <!-- 3. ESPÍRITUS [11-13] -->
+        <div class="mb-8 p-4 bg-purple-100 rounded-3xl border border-purple-200">
+            <h2 class="text-[10px] font-black text-purple-700 uppercase tracking-widest mb-3 flex items-center">✨ Espíritu de la Naturaleza</h2>
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-[10px] font-bold text-purple-800 uppercase italic text-center">¿Cubo transparente colocado?</span>
                 <input type="checkbox" id="spirit-check" class="w-5 h-5 accent-purple-600">
             </div>
-            <input id="spirit-pts" type="number" placeholder="Suma puntos adicionales" 
-                   class="w-full mt-3 p-3 rounded-xl border-none text-sm shadow-sm focus:ring-2 focus:ring-purple-400 outline-none">
-            <p class="text-[10px] text-purple-500 mt-2 italic leading-tight">Cada espíritu tiene reglas únicas (+4 por montañas, puntos por grupos, etc.). [6, 7]</p>
+            <input id="spirit-pts" type="number" placeholder="Puntos adicionales" class="w-full p-3 rounded-xl text-sm border-none shadow-sm">
         </div>
 
-        <button onclick="calculateScore()" class="w-full bg-slate-800 text-white font-black py-5 rounded-2xl shadow-xl active:scale-95 transition-all uppercase tracking-widest text-lg">
-            Sincronizar Balance
-        </button>
-        
-        <!-- RESULTADO FINAL -->
-        <div id="result" class="mt-8 p-8 bg-slate-900 rounded-3xl text-center hidden border-4 border-amber-400">
-            <p class="text-xs uppercase tracking-widest text-slate-400 font-bold">Puntuación de Victoria</p>
+        <button onclick="calculateScore()" class="w-full bg-slate-800 text-white font-black py-5 rounded-3xl shadow-xl active:scale-95 transition-all uppercase tracking-widest">Sincronizar Balance</button>
+
+        <!-- RESULTADO Y REINICIO -->
+        <div id="result" class="mt-8 p-6 bg-slate-900 rounded-3xl text-center hidden border-4 border-amber-400">
+            <p class="text-xs uppercase font-bold text-slate-400">Balance de Victoria</p>
             <p id="total-pts" class="text-7xl font-black text-amber-400 my-2">0</p>
-            <p class="text-[11px] text-slate-500 mt-4 italic font-medium leading-tight">
-                En caso de empate, gana quien haya colocado <br><strong>más cubos de animal</strong> en total. [8, 9]
-            </p>
+            <p class="text-[10px] text-slate-500 italic mt-2 mb-6">En empate gana quien puso más cubos de animal [14, 15].</p>
+            <button onclick="resetGame()" class="w-full bg-red-500/20 text-red-400 font-bold py-3 rounded-xl border border-red-500/50 uppercase text-xs tracking-widest hover:bg-red-500 hover:text-white transition-all">Reiniciar Partida</button>
         </div>
     </div>
+
+    <!-- MODAL DE SOLES [2, 16] -->
+    <div id="soles-modal" class="hidden fixed inset-0 z-[7] bg-black/60 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-xs text-center shadow-2xl border-4 border-amber-400">
+            <h2 class="text-xl font-black mb-4 uppercase italic">Rango de Soles ☀️</h2>
+            <div class="text-left text-sm space-y-1 border-y py-4 mb-4">
+                <div class="flex justify-between"><span>40+ pts</span> <span>☀️</span></div>
+                <div class="flex justify-between"><span>70+ pts</span> <span>☀️☀️</span></div>
+                <div class="flex justify-between"><span>90+ pts</span> <span>☀️☀️☀️</span></div>
+                <div class="flex justify-between"><span>110+ pts</span> <span>☀️☀️☀️☀️</span></div>
+                <div class="flex justify-between"><span>130+ pts</span> <span>☀️☀️☀️☀️☀️</span></div>
+                <div class="flex justify-between"><span>140+ pts</span> <span>☀️☀️☀️☀️☀️☀️</span></div>
+                <div class="flex justify-between"><span>150+ pts</span> <span>☀️☀️☀️☀️☀️☀️☀️</span></div>
+                <div class="flex justify-between"><span>160+ pts</span> <span>☀️☀️☀️☀️☀️☀️☀️☀️</span></div>
+            </div>
+            <p class="text-[9px] text-slate-500 mb-4 font-bold uppercase tracking-tighter">BONUS: Lado A (+1☀️) | Espíritu (+1☀️)</p>
+            <button onclick="toggleSolesTable()" class="bg-slate-800 text-white px-6 py-2 rounded-xl font-bold uppercase text-xs">Cerrar</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
